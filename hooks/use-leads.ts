@@ -21,35 +21,35 @@ export function useLeads() {
 
   const { data: stats } = useSWR(STATS_KEY, () => getStats());
 
-  const addLead = (data: {
+  const addLead = async (data: {
     companyName: string;
     contactPerson: string;
     phone: string;
     niche: Niche;
     notes?: string;
   }) => {
-    createLead(data);
+    await createLead(data);
     mutate(LEADS_KEY);
     mutate(STATS_KEY);
   };
 
-  const moveLeadToStage = (id: string, stage: Stage) => {
-    updateLeadStage(id, stage);
+  const moveLeadToStage = async (id: string, stage: Stage) => {
+    await updateLeadStage(id, stage);
     mutate(LEADS_KEY);
     mutate(STATS_KEY);
   };
 
-  const editLead = (
+  const editLead = async (
     id: string,
     data: Partial<Omit<Lead, "id" | "createdAt">>
   ) => {
-    updateLead(id, data);
+    await updateLead(id, data);
     mutate(LEADS_KEY);
     mutate(STATS_KEY);
   };
 
-  const removeLead = (id: string) => {
-    deleteLead(id);
+  const removeLead = async (id: string) => {
+    await deleteLead(id);
     mutate(LEADS_KEY);
     mutate(STATS_KEY);
   };
