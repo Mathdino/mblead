@@ -125,7 +125,7 @@ export default function CRMPage() {
                 <div className="flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary md:hidden">
                     <span className="text-sm font-bold text-primary-foreground">
-                      LF
+                      MBL
                     </span>
                   </div>
                   <div className="flex flex-col">
@@ -172,9 +172,9 @@ export default function CRMPage() {
             ) : (
               <div className="animate-in fade-in duration-500 flex-1 flex flex-col">
                 {activeTab === "pipeline" && (
-                  <PipelineView 
-                    leads={leads} 
-                    onSelectLead={handleSelectLead} 
+                  <PipelineView
+                    leads={leads}
+                    onSelectLead={handleSelectLead}
                     onMoveLead={moveLeadToStage}
                   />
                 )}
