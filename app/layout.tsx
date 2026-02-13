@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "MbLead",
   description:
     "Gerencie seus leads e potenciais clientes de forma simples e eficiente.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export const viewport: Viewport = {
