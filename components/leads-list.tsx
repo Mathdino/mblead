@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Search,
-  Building2,
-  Phone,
-  User,
-  ChevronRight,
-  Filter,
-} from "lucide-react";
+import { Search, Building2, Phone, User, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import type { Lead, Stage } from "@/lib/types";
@@ -22,6 +16,8 @@ import {
   STAGE_BG_LIGHT,
   NICHE_ICONS,
 } from "@/lib/types";
+import { useMessages } from "@/hooks/use-messages";
+import { buildWhatsAppLink } from "@/lib/messages-store";
 
 interface LeadsListProps {
   leads: Lead[];
@@ -33,6 +29,7 @@ export function LeadsList({ leads, onSelectLead }: LeadsListProps) {
   const [filterStage, setFilterStage] = useState<Stage | "all">("all");
   const { ref, onMouseDown, onMouseMove, onMouseUp, onMouseLeave, isDragging } =
     useDragScroll();
+  const { getFor } = useMessages();
 
   const filtered = leads.filter((lead) => {
     const matchesSearch =
@@ -113,56 +110,86 @@ export function LeadsList({ leads, onSelectLead }: LeadsListProps) {
         <div className="flex flex-col gap-2">
           {filtered.map((lead) => {
             const Icon = NICHE_ICONS[lead.niche] || Building2;
+            const waLink = buildWhatsAppLink(
+              lead.phone,
+              getFor(lead.niche),
+              lead.companyName,
+            );
             return (
-              <button
+              <div
                 key={lead.id}
                 onClick={() => onSelectLead(lead)}
-                className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-3 text-left transition-all active:scale-[0.98] hover:shadow-md"
+                className="flex w-full flex-col gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all active:scale-[0.98] hover:shadow-md"
               >
-                <div
-                  className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-                    STAGE_BG_LIGHT[lead.stage],
-                  )}
-                >
-                  <Icon
-                    className={cn("h-5 w-5", STAGE_TEXT_COLORS[lead.stage])}
-                  />
-                </div>
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-sm font-semibold text-foreground">
-                  {lead.companyName}
-                </span>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <User className="h-3 w-3 shrink-0" />
-                  <span className="truncate">{lead.contactPerson}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Phone className="h-3 w-3 shrink-0" />
-                  <span>{lead.phone}</span>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <div className="flex items-center gap-1">
-                  <span
+                <div className="flex items-center gap-3">
+                  <div
                     className={cn(
-                      "h-2 w-2 rounded-full",
-                      STAGE_COLORS[lead.stage],
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+                      STAGE_BG_LIGHT[lead.stage],
                     )}
-                  />
-                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                    {STAGE_LABELS[lead.stage]}
-                  </span>
+                  >
+                    <Icon
+                      className={cn("h-5 w-5", STAGE_TEXT_COLORS[lead.stage])}
+                    />
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="truncate text-sm font-semibold text-foreground">
+                      {lead.companyName}
+                    </span>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <User className="h-3 w-3 shrink-0" />
+                      <span className="truncate">{lead.contactPerson}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Phone className="h-3 w-3 shrink-0" />
+                      <span>{lead.phone}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <div className="flex items-center gap-1">
+                      <span
+                        className={cn(
+                          "h-2 w-2 rounded-full",
+                          STAGE_COLORS[lead.stage],
+                        )}
+                      />
+                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                        {STAGE_LABELS[lead.stage]}
+                      </span>
+                    </div>
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] whitespace-nowrap"
+                    >
+                      {lead.niche}
+                    </Badge>
+                  </div>
                 </div>
-                <Badge
-                  variant="outline"
-                  className="text-[10px] whitespace-nowrap"
-                >
-                  {lead.niche}
-                </Badge>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center justify-end gap-2">
+                  <a
+                    href={waLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Button size="sm" variant="secondary" className="gap-1">
+                      <Phone className="h-4 w-4" />
+                      WhatsApp
+                    </Button>
+                  </a>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectLead(lead);
+                    }}
+                  >
+                    Detalhes
+                  </Button>
+                </div>
               </div>
-            </button>
             );
           })}
         </div>

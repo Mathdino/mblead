@@ -1,10 +1,10 @@
 "use client";
 
-import { ChevronRight, Building2, Phone, User } from "lucide-react";
+import { Building2, Phone, User, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
-import type { Lead, Stage } from "@/lib/types";
 import {
   STAGES,
   STAGE_LABELS,
@@ -12,7 +12,11 @@ import {
   STAGE_TEXT_COLORS,
   STAGE_BG_LIGHT,
   NICHE_ICONS,
+  type Lead,
+  type Stage,
 } from "@/lib/types";
+import { useMessages } from "@/hooks/use-messages";
+import { buildWhatsAppLink } from "@/lib/messages-store";
 
 interface PipelineViewProps {
   leads: Lead[];
@@ -27,6 +31,7 @@ export function PipelineView({
 }: PipelineViewProps) {
   const { ref, onMouseDown, onMouseMove, onMouseUp, onMouseLeave, isDragging } =
     useDragScroll();
+  const { getFor } = useMessages();
 
   const handleDragStart = (e: React.DragEvent, leadId: string) => {
     e.dataTransfer.setData("leadId", leadId);
@@ -135,6 +140,9 @@ function LeadCard({
   onDragStart: (e: React.DragEvent) => void;
 }) {
   const Icon = NICHE_ICONS[lead.niche] || Building2;
+  const { getFor } = useMessages();
+  const message = getFor(lead.niche);
+  const waLink = buildWhatsAppLink(lead.phone, message, lead.companyName);
 
   return (
     <div
@@ -142,32 +150,52 @@ function LeadCard({
       onDragStart={onDragStart}
       onClick={onSelect}
       className={cn(
-        "flex w-full items-center gap-3 rounded-lg border border-border bg-card p-3 text-left transition-all active:scale-[0.98] cursor-move",
+        "flex w-full flex-col gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all active:scale-[0.98] cursor-move",
         "hover:shadow-md hover:border-primary/20",
       )}
     >
-      <div
-        className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-          STAGE_BG_LIGHT[stage],
-        )}
-      >
-        <Icon className={cn("h-5 w-5", STAGE_TEXT_COLORS[stage])} />
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5 pointer-events-none">
-        <span className="truncate text-sm font-semibold text-foreground">
-          {lead.companyName}
-        </span>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <User className="h-3 w-3 shrink-0" />
-          <span className="truncate">{lead.contactPerson}</span>
+      <div className="flex items-center gap-3">
+        <div
+          className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+            STAGE_BG_LIGHT[stage],
+          )}
+        >
+          <Icon className={cn("h-5 w-5", STAGE_TEXT_COLORS[stage])} />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 pointer-events-none">
+          <span className="truncate text-sm font-semibold text-foreground">
+            {lead.companyName}
+          </span>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <User className="h-3 w-3 shrink-0" />
+            <span className="truncate">{lead.contactPerson}</span>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-1 pointer-events-none shrink-0">
+          <Badge variant="outline" className="text-[10px] whitespace-nowrap">
+            {lead.niche}
+          </Badge>
         </div>
       </div>
-      <div className="flex flex-col items-end gap-1 pointer-events-none">
-        <Badge variant="outline" className="text-[10px] whitespace-nowrap">
-          {lead.niche}
-        </Badge>
-        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+      <div className="flex items-center justify-end gap-2 pointer-events-auto">
+        <a href={waLink} target="_blank" rel="noopener noreferrer">
+          <Button size="sm" variant="secondary" className="gap-1">
+            <MessageSquare className="h-4 w-4" />
+            WhatsApp
+          </Button>
+        </a>
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect();
+          }}
+        >
+          Detalhes
+        </Button>
       </div>
     </div>
   );

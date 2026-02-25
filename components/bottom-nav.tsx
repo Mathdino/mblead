@@ -1,9 +1,9 @@
 "use client";
 
-import { LayoutDashboard, Users, Plus, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Users, Plus, BarChart3, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type TabId = "pipeline" | "leads" | "add" | "stats";
+export type TabId = "pipeline" | "leads" | "add" | "stats" | "messages";
 
 interface BottomNavProps {
   activeTab: TabId;
@@ -15,6 +15,7 @@ const tabs: { id: TabId; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "leads", label: "Leads", icon: Users },
   { id: "add", label: "Novo", icon: Plus },
   { id: "stats", label: "Resumo", icon: BarChart3 },
+  { id: "messages", label: "Mensagens", icon: MessageSquare },
 ];
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {

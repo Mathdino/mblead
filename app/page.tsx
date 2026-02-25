@@ -14,6 +14,7 @@ import { LeadsList } from "@/components/leads-list";
 import { LeadForm } from "@/components/lead-form";
 import { LeadDetail } from "@/components/lead-detail";
 import { StatsView } from "@/components/stats-view";
+import { MessagesView } from "@/components/messages-view";
 import { useLeads } from "@/hooks/use-leads";
 import type { Lead } from "@/lib/types";
 import { STAGE_LABELS } from "@/lib/types";
@@ -102,6 +103,8 @@ export default function CRMPage() {
         return "Novo Lead";
       case "stats":
         return "Resumo";
+      case "messages":
+        return "Mensagens";
     }
   }
 
@@ -187,6 +190,7 @@ export default function CRMPage() {
                   </div>
                 )}
                 {activeTab === "stats" && <StatsView stats={stats} />}
+                {activeTab === "messages" && <MessagesView />}
               </div>
             )}
           </main>

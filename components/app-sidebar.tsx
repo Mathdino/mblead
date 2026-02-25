@@ -5,6 +5,7 @@ import {
   Users,
   Plus,
   BarChart3,
+  MessageSquare,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,7 @@ const tabs: { id: TabId; label: string; icon: any }[] = [
   { id: "leads", label: "Leads", icon: Users },
   { id: "add", label: "Novo Lead", icon: Plus },
   { id: "stats", label: "Resumo", icon: BarChart3 },
+  { id: "messages", label: "Mensagens", icon: MessageSquare },
 ];
 
 export function AppSidebar({ activeTab, onTabChange, stats }: AppSidebarProps) {
