@@ -16,7 +16,8 @@ import {
   type Stage,
 } from "@/lib/types";
 import { useMessages } from "@/hooks/use-messages";
-import { buildWhatsAppLink } from "@/lib/messages-store";
+import { buildWhatsAppLink, isPhoneValid } from "@/lib/messages-store";
+import { toast } from "sonner";
 
 interface PipelineViewProps {
   leads: Lead[];
@@ -179,7 +180,18 @@ function LeadCard({
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 pointer-events-auto">
-        <a href={waLink} target="_blank" rel="noopener noreferrer">
+        <a
+          href={waLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isPhoneValid(lead.phone)) {
+              e.preventDefault();
+              toast.error("Telefone inválido para WhatsApp");
+            }
+          }}
+        >
           <Button size="sm" variant="secondary" className="gap-1">
             <MessageSquare className="h-4 w-4" />
             WhatsApp

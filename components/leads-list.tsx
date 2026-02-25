@@ -17,7 +17,8 @@ import {
   NICHE_ICONS,
 } from "@/lib/types";
 import { useMessages } from "@/hooks/use-messages";
-import { buildWhatsAppLink } from "@/lib/messages-store";
+import { buildWhatsAppLink, isPhoneValid } from "@/lib/messages-store";
+import { toast } from "sonner";
 
 interface LeadsListProps {
   leads: Lead[];
@@ -170,7 +171,13 @@ export function LeadsList({ leads, onSelectLead }: LeadsListProps) {
                     href={waLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!isPhoneValid(lead.phone)) {
+                        e.preventDefault();
+                        toast.error("Telefone inválido para WhatsApp");
+                      }
+                    }}
                   >
                     <Button size="sm" variant="secondary" className="gap-1">
                       <Phone className="h-4 w-4" />

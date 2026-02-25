@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageSquare, Save } from "lucide-react";
 import { NICHES, type Niche } from "@/lib/types";
 import { useMessages } from "@/hooks/use-messages";
@@ -17,6 +17,13 @@ export function MessagesView() {
     });
     return initial;
   });
+  useEffect(() => {
+    const next: Record<Niche, string> = {} as any;
+    NICHES.forEach((n) => {
+      next[n] = (messages as any)[n] || "";
+    });
+    setLocal(next);
+  }, [messages]);
 
   const handleChange = (niche: Niche, value: string) => {
     setLocal((prev) => ({ ...prev, [niche]: value }));
@@ -27,14 +34,33 @@ export function MessagesView() {
     toast.success("Mensagem salva", { description: `Nicho: ${niche}` });
   };
 
+  const handleImportAll = async () => {
+    const res = await fetch("/api/messages/import", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ map: local }),
+    });
+    if (!res.ok) {
+      toast.error("Falha ao importar mensagens");
+      return;
+    }
+    const data = await res.json();
+    toast.success("Mensagens importadas", { description: `${data.count} nichos atualizados` });
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground mb-2">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2 text-muted-foreground">
           <MessageSquare className="h-4 w-4" />
           <span className="text-xs font-semibold uppercase tracking-wider">
             Mensagens por Nicho
           </span>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleImportAll}>
+            Importar para o Banco
+          </Button>
         </div>
         <p className="text-sm text-muted-foreground">
           Cadastre a mensagem padrão para cada nicho. Ela será usada ao enviar
