@@ -108,7 +108,7 @@ export function buildWhatsAppLink(
   companyName?: string,
 ): string {
   const digits = normalizePhone(phone);
-  const prefix = companyName ? `Olá, ${companyName} ` : "";
+  const prefix = companyName ? `Olá, ${companyName} 👋🏼` : "";
   const text = encodeURIComponent(`${prefix}${message || ""}`);
   return `https://wa.me/${digits}?text=${text}`;
 }
